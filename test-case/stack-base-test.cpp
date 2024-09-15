@@ -42,6 +42,15 @@ namespace MyStl {
         assert(s1.pop() && "Pop operation should succeed.");
         assert(s1.getTop() == 9998 && "Top element should be 9998 after popping.");
 
+        // 测试迭代器
+        benchmark("Iterator Test", [&]() {
+            int cnt = 0;
+            for (auto it = s1.begin(); it != s1.end(); ++it) {
+                assert(*it == cnt && "Assertion failed");
+                cnt++;
+            }
+        });
+
         // 检查是否能够继续正常操作
         benchmark("Push 5000 elements after pop", [&]() {
             for (int i = 0; i < 5000; i++) {

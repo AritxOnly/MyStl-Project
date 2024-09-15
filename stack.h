@@ -3,12 +3,19 @@
 
 #include "abstract-data-structure/seqlist.h"
 #include <cassert>
+#include <concepts>
+#include <exception>
 #include <stdexcept>
 #include <utility>
 #include <ostream>
 
 template<class T>
 class SeqList;
+
+template<class T>
+concept Printable = requires(T x, std::ostream& out) {
+    { out << x } -> std::same_as<std::ostream&>;
+};
 
 namespace MyStl {
     // 顺序栈
@@ -35,6 +42,53 @@ namespace MyStl {
         stack operator*(const int times) const;   // 用于将stack loop拓展times份
         stack& operator+=(const stack& other);
         stack& operator*=(const int time);
+        bool operator==(const stack& other);
+        bool operator!=(const stack& other);
+
+        // 迭代器类定义
+        class iterator {
+        public:
+            iterator(int _index, int _size, T* _arr) : 
+                index(_index), size(_size), arr(_arr) {
+                if (index >= size)
+                    index = -1;
+            }
+
+            T& operator*() const {
+                if (index >= size) {
+                    throw std::out_of_range("Index out of range");
+                }
+                if (arr == nullptr) {
+                    throw std::overflow_error("arr not initialized");
+                }
+                return arr[index];
+            }
+
+            iterator& operator++() {
+                index++;
+                if (index >= size) {
+                    index = -1;
+                }
+                return *this;
+            }
+
+            bool operator!=(const iterator& other) {
+                return (index != other.index) ? true : false;
+            }
+
+            bool operator==(const iterator& other) {
+                return (index == other.index) ? true : false;
+            }
+
+        private:
+            int index = 0;
+            int size = 0;
+            T* arr = nullptr;
+        };
+
+        iterator begin();
+        iterator back();
+        iterator end();
 
         // 引用seqlist抽象对象的成员变量
         using SeqList<T>::arr;
@@ -43,16 +97,19 @@ namespace MyStl {
     
     private:
         int top;
+
+        bool isUnequalExist(const stack& other);
     };
 }
 
-template<class T>
+template<Printable T>
 std::ostream& operator<<(std::ostream& out, MyStl::stack<T>& stack) {
     stack.operator<<(out);
     return out;
 }
 
 using namespace MyStl;
+
 template<class T>
 stack<T>::stack() : SeqList<T>(), top(-1) {
     assert(capacity == 0);  // 断言
@@ -215,6 +272,46 @@ stack<T>& stack<T>::operator*=(const int times) {
     size = _size;
     top = _size - 1;
     return *this;
+}
+
+template<class T>
+bool stack<T>::isUnequalExist(const stack<T>& other) {
+    if (size != other.size) {
+        return true;
+    }
+    for (int i = 0; i < size; i++) {
+        if (arr[i] != other.arr[i])
+            return true;
+    }
+    return false;
+}
+
+template<class T>
+bool stack<T>::operator==(const stack<T>& other) {
+    return (size == other.size) && !isUnequalExist(other);
+}
+
+template<class T>
+bool stack<T>::operator!=(const stack<T>& other) {
+    return !(*this == other);
+}
+
+template<class T>
+stack<T>::iterator stack<T>::begin() {
+    if (size == 0) {
+        return stack<T>::iterator(-1, size, arr);
+    }
+    return stack<T>::iterator(0, size, arr);
+}
+
+template<class T>
+stack<T>::iterator stack<T>::back() {
+    return stack<T>::iterator(top, size, arr);
+} 
+
+template<class T>
+stack<T>::iterator stack<T>::end() {
+    return stack<T>::iterator(-1, size, arr);
 }
 
 #endif
