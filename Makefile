@@ -1,17 +1,26 @@
 COMPILER=clang++
-CFLAGS=-Wall
+CFLAGS=-Wall -g
 CXXVERSION=c++20
 
 stackbench: stack-base-test.o
-	${COMPILER} ${CFLAGS} -std=${CXXVERSION} $< -o $@
-	./$@
+	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} $< -o $@
+	@echo Compile finished, running
+	@./$@
+
+vectorbench: vector-base-test.o
+	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} $< -o $@
+	@echo Compile finished, running
+	@./$@
 
 stack-base-test.o: ./test-case/stack-base-test.cpp
 	${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
 
-# 通用配置
-%.o: %.cpp %.h
+vector-base-test.o: ./test-case/vector-base-test.cpp
 	${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
 
+# 通用配置
+%.o: %.cpp %.h
+	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
+
 clean:
-	rm -f stackbench *.o
+	@rm -f stackbench vectorbench *.o
