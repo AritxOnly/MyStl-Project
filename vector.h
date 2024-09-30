@@ -228,7 +228,7 @@ namespace MyStl {
 
     template<class T>
     bool vector<T>::operator==(const vector<T>& other) {
-        return (size == other.size) && (capacity == other.capacity) && !isUnequalExist(other);    
+        return (size == other.size) && !isUnequalExist(other);    
     }
 
     template<class T>

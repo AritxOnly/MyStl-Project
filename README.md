@@ -93,3 +93,39 @@ All functionality tests passed with assertions.<br>
 > std::vector swap with another vector took 0 microseconds
 > std::vector shrink_to_fit took 0 microseconds
 > All std::vector tests passed.
+
+## `string`字符串容器
+
+- 2024.9.30 `string`容器完成实现与基准测试
+
+### 基准测试
+
+**在Apple Silicon M2, Macbook Air 13, 16G RAM+512G SSD测试机上运行`make vectorbench`**
+
+得到基准测评结果：
+
+^(1)^:M代表1000000数量级
+
+| 测试项目                  | `MyStl::string` | `std::string` |
+| ------------------------- | --------------- | ------------- |
+| 向字符串追加1M^(1)^个'b'  | 1833us          | 974us         |
+| 从字符串中提取100万个字符 | 1575us          | 32us          |
+| 在字符串中找'bbbbbb'子串  | 0us             | 432us         |
+
+> MyStl::string benchmark:
+> Running large data set tests for MyStl::string...
+> Append 1 million 'b's to MyStl::string took 1833 microseconds
+> Substring operation on MyStl::string (extract 1 million characters) took 1575 microseconds
+> Find substring 'bbbbbb' in MyStl::string took 0 microseconds
+> All large data set tests passed for MyStl::string.
+
+> std::string benchmark
+> Running large data set tests for std::string...
+> Append 1 million 'b's to std::string took 974 microseconds
+> Substring operation on std::string (extract 1 million characters) took 32 microseconds
+> Find substring 'bbbbbb' in std::string took 432 microseconds
+> All large data set tests passed for std::string.
+
+### 测试分析
+
+在绝大多数项目中被标准库实现超越，但是在查找子串时有明显性能优势；推测是使用了KMP算法的缘故

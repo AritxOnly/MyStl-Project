@@ -91,7 +91,7 @@ _SL::SeqList() : arr(nullptr), size(0), capacity(0) {}
 
 _TPL
 _SL::~SeqList() {
-    if (arr == nullptr) 
+    if (arr != nullptr) 
         clear();
 }
 
