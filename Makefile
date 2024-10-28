@@ -17,6 +17,8 @@ stringbench: string-base-test.o
 	@echo Compile finished, running
 	@./$@
 
+all: stackbench vectorbench stringbench
+
 stack-base-test.o: ./test-case/stack-base-test.cpp
 	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
 	@echo Compiling $@

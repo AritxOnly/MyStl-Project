@@ -39,7 +39,7 @@ namespace MyStl {
          */
         using typename SeqList<char>::iterator;
 
-        iterator find(const char* _str);
+        iterator find(const char* pat);
         iterator find(const string& _str);
         iterator begin();
         iterator back();
@@ -178,39 +178,40 @@ namespace MyStl {
         return *this;        
     }
 
-    inline string::iterator string::find(const char* _str) {
-        /**  
-          * TODO: 用KMP算法匹配字符串
-          */
-        int len = strlen(_str);
+    inline string::iterator string::find(const char* pat) {
+        // 用KMP算法匹配字符串
+        int len = strlen(pat);
         int* next = new int[len];
         auto get_next = [&]() {
-            int j = 0;
-            next[0] = 0;
-            for (int i = 1; i < len; i++) {
-                while (j > 0 && _str[i] != _str[j]) {
-                    j = next[j - 1];    // 回溯
+            int j = 0, k = -1;
+            next[0] = -1;
+            j = 1;
+            while (j < len) {
+                k = next[j - 1];
+                while (true) {
+                    if (k == -1 || pat[j - 1] == pat[k] || pat[j - 1] == '*' || pat[k] == '*') {
+                        k++;
+                        next[j] = k;
+                        j++;
+                        break;
+                    }
+                    k = next[k];
                 }
-                if (_str[i] == _str[j]) {
-                    j++;
-                }
-                next[i] = j;
             }
         };
         get_next();
-        int j = 0;
-        for (int i = 0; i < size - 1; i++) {
-            while (j > 0 && _str[i] != _str[j]) {
-                j = next[j - 1];    // 回溯
-            }
-            if (_str[i] == _str[j]) {
-                j++;
-            }
-            if (j == len) {
-                return string::iterator(i - len + 1, size, arr);
+        int p = 0, t = 0;
+        while (p < len && t < size) {
+            if (p == -1 || pat[p] == arr[t] || pat[p] == '*') {
+                p++;
+                t++;
+            } else {
+                p = next[p];
             }
         }
-        return string::iterator(-1, size, arr);
+        if (p < len)
+            return string::iterator(-1, size, arr);
+        return string::iterator(t - len, size, arr);
     }
 
     inline string::iterator string::find(const string& _str) {

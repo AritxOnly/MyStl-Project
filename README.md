@@ -97,6 +97,7 @@ All functionality tests passed with assertions.<br>
 ## `string`字符串容器
 
 - 2024.9.30 `string`容器完成实现与基准测试
+- 2024.10.28 `MyStl::string::find`函数重构，修复错误
 
 ### 基准测试
 
@@ -110,7 +111,7 @@ All functionality tests passed with assertions.<br>
 | ------------------------- | --------------- | ------------- |
 | 向字符串追加1M^(1)^个'b'  | 1833us          | 974us         |
 | 从字符串中提取100万个字符 | 1575us          | 32us          |
-| 在字符串中找'bbbbbb'子串  | 0us             | 432us         |
+| 在字符串中找'bbbbbb'子串  | 51816us             | 432us         |
 
 > MyStl::string benchmark:
 > Running large data set tests for MyStl::string...
@@ -128,4 +129,4 @@ All functionality tests passed with assertions.<br>
 
 ### 测试分析
 
-在绝大多数项目中被标准库实现超越，但是在查找子串时有明显性能优势；推测是使用了KMP算法的缘故
+在绝大多数项目中被标准库实现超越
