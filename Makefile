@@ -1,6 +1,7 @@
 COMPILER=clang++
 CFLAGS=-Wall -g
 CXXVERSION=c++20
+ALL=stackbench vectorbench stringbench mapbench
 
 stackbench: stack-base-test.o
 	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} $< -o $@
@@ -17,7 +18,12 @@ stringbench: string-base-test.o
 	@echo Compile finished, running
 	@./$@
 
-all: stackbench vectorbench stringbench
+mapbench: map-base-test.o
+	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} $< -o $@
+	@echo Compile finished, running
+	@./$@
+
+all: ${ALL}
 
 stack-base-test.o: ./test-case/stack-base-test.cpp
 	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
@@ -31,9 +37,13 @@ string-base-test.o: ./test-case/string-base-test.cpp
 	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
 	@echo Compiling $@
 
+map-base-test.o: ./test-case/map-base-test.cpp
+	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
+	@echo Compiling $@
+
 # 通用配置
 %.o: %.cpp %.h
 	@${COMPILER} ${CFLAGS} -std=${CXXVERSION} -c $< -o $@
 
 clean:
-	@rm -f stackbench vectorbench stringbench *.o
+	@rm -f ${ALL} *.o

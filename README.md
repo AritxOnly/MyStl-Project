@@ -130,3 +130,48 @@ All functionality tests passed with assertions.<br>
 ### 测试分析
 
 在绝大多数项目中被标准库实现超越
+
+## `pair<T1, T2>`元组容器
+
+- 2024.11.4 `MyStl::pair<T1, T2>`容器完成实现
+
+## `map<K, V>`映射容器
+
+- 2024.11.14 `MyStl::map<K, V>`容器完成部分实现（不包含迭代器）
+- 2024.11.18 `MyStl::map<K, V>`容器通过基准测试
+
+### 基准测试
+
+**在Apple Silicon M2, Macbook Air 13, 16G RAM+512G SSD测试机上运行`make mapbench`**
+
+得到基准测评结果：
+
+| 测试项目                    | `MyStl::map<int, int>` | `std::map<int, int>` |
+| --------------------------- | ---------------------- | -------------------- |
+| 向映射容器中插入10000个元素 | 6622us                 | 11836us              |
+| 在映射容器中查找元素        | 3452us                 | 4100us               |
+| 从容器中删除5000个元素      | 1165us                 | 2141us               |
+| 检查剩余的元素              | 1532us                 | 1666us               |
+| 深拷贝                      | 127us                  | 2723us               |
+| 交换两个容器内容            | 0                      | 0                    |
+
+> MyStl::map<int, int> benchmark:
+> Running functionality tests with assertions...
+> Insert 10000 elements took 6622 microseconds
+> Find elements took 3452 microseconds
+> Erase 5000 elements took 1165 microseconds
+> Check remaining elements took 1532 microseconds
+> Copy map (deep copy) took 127 microseconds
+> Swap two maps took 0 microseconds
+> All functionality tests passed with assertions.
+
+> std::map<int, int> benchmark:
+> Running functionality tests with assertions...
+> Insert 10000 elements took 11836 microseconds
+> Find elements took 4100 microseconds
+> Erase 5000 elements took 2141 microseconds
+> Check remaining elements took 1666 microseconds
+> Copy map (deep copy) took 2723 microseconds
+> Swap two maps took 0 microseconds
+> All functionality tests passed with assertions.
+
